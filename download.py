@@ -156,19 +156,20 @@ while True:
             else:
                 print("Downloading: {}/{}".format(photos, total_photos))
         photo_path = os.path.join(dir, filename)
-        with open(photo_path, "wb") as f:
-            try:
-                f.write(requests.get(download_url, timeout=15).content)
-            except:
-                print("\nInterrupted {} photos dowmloaded".format(photos-1))
-                os.remove(photo_path)
-                if not os.listdir(dir):
-                    os.rmdir(dir)
-                    if options["-o"]:
-                        if not os.listdir(os.path.split(dir)[0]):
-                            os.rmdir(os.path.split(dir)[0])
-                break_loop = True
-                break
+        if not os.path.exists(photo_path):
+            with open(photo_path, "wb") as f:
+                try:
+                    f.write(requests.get(download_url, timeout=15).content)
+                except:
+                    print("\nInterrupted {} photos downloaded".format(photos))
+                    os.remove(photo_path)
+                    if not os.listdir(dir):
+                        os.rmdir(dir)
+                        if options["-o"]:
+                            if not os.listdir(os.path.split(dir)[0]):
+                                os.rmdir(os.path.split(dir)[0])
+                    # break_loop = True
+                    # break
         if photos == total_photos:
             break_loop = True
             break
